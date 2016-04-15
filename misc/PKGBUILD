@@ -1,0 +1,21 @@
+pkgname=abzer-git
+pkgver=1
+pkgrel=1
+pkgdesc=""
+arch=("any")
+url="https://github.com/mineo/abzer"
+license=('MIT')
+source=('git+https://github.com/mineo/abzer')
+md5sums=('SKIP')
+depends=('python')
+makedepends=('git')
+
+pkgver(){
+  cd "${srcdir}/abzer"
+  echo "$(git describe --tags --always | sed 's/-/./g' )"
+}
+
+package() {
+  cd "${srcdir}/abzer"
+  python setup.py install --root="$pkgdir" --optimize=1
+}
