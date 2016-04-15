@@ -20,7 +20,7 @@ setup(name="abzer",
       long_description=open("README.rst").read(),
       setup_requires=["setuptools_scm"],
       use_scm_version={"write_to": "abzer/version.py"},
+      install_requires=["aiohttp"],
       extras_require={
-          'docs': ['sphinx']
-      }
+          'docs': ['sphinx']}
       )
