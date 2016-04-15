@@ -105,4 +105,5 @@ files = (join("/home/wieland/Musik", filename) for filename in
 loop = asyncio.get_event_loop()
 abzer = Abzer(files)
 loop.run_until_complete(abzer.run())
+abzer.session.close()
 loop.close()
