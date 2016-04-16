@@ -12,6 +12,7 @@ from . import const
 from .abzer import Abzer
 from os import cpu_count, walk
 from os.path import isfile, join
+from sys import exit
 
 
 def collect_files(dir):
@@ -28,6 +29,13 @@ def read_config(filename):
     parser.read([filename])
     logging.debug("%s", parser["essentia"])
     return parser
+
+
+def safety_check(config):
+    for filename in [config.get("essentia", "path"),
+                     config.get("essentia", "profile")]:
+        if not isfile(filename):
+            exit("%s does not exist" % filename)
 
 
 def main():
@@ -58,6 +66,8 @@ def main():
         logging.exception("Could not read the configuration file.")
         exit(1)
 
+    safety_check(config)
+
     files = []
 
     for name in args.filenames:
@@ -68,6 +78,7 @@ def main():
 
     loop = asyncio.get_event_loop()
     loop.set_debug(args.verbose)
+
     abzer = Abzer(args.processes,
                   config.get("essentia", "path"),
                   config.get("essentia", "profile"),
