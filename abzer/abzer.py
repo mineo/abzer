@@ -5,15 +5,12 @@
 import aiohttp
 import asyncio
 import json
+import logging
 import sqlite3
+
+
+from . import const
 from tempfile import NamedTemporaryFile
-
-from os import listdir
-from os.path import join
-
-ESSENTIA = "/usr/bin/streaming_extractor_music"
-PROFILE = "/home/wieland/.abzsubmit/profile.yaml"
-URL_BASE = "http://acousticbrainz.org/%s/low-level"
 
 
 class FileHandler():
@@ -25,19 +22,27 @@ class FileHandler():
         self.filename = filename
         self.tempfile = NamedTemporaryFile(mode="r+b")
 
-    async def process(self):
+    async def process(self, essentia, profile):
         """Analyze the file."""
-        print("Analyzing %s" % self.filename)
+        logging.info("%s: Starting essentia", self.filename)
         process = await asyncio.create_subprocess_exec(
-            ESSENTIA, self.filename, self.tempfile.name, PROFILE,
+            essentia, self.filename, self.tempfile.name, profile,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE)
         (stdout, stderr) = await process.communicate()
-        return (self, process.returncode)
+        rc = process.returncode
+        if rc != const.SUBPROCESS_OK:
+            logging.error("%s: The file could not be analyzed.", self.filename)
+            logging.error("Here is essentias stdout: %s",
+                          stdout.decode("utf-8"))
+            logging.error("Here is essentias stderr: %s",
+                          stderr.decode("utf-8"))
+        return rc
 
     async def submit_features(self, session):
         """Submit the results of the analysis."""
         # Ugh, we read the whole file here in a blocking manner :/
+        logging.info("%s: Submitting features", self.filename)
         content = self.tempfile.read()
         data = json.loads(content.decode("utf-8"))
 
@@ -45,18 +50,23 @@ class FileHandler():
             raise ValueError("%s does not have a recording id" % self.filename)
 
         mbid = data["metadata"]["tags"]["musicbrainz_trackid"][0]
-        url = URL_BASE % mbid
+        url = const.URL_BASE % mbid
         status = 0
         async with session.post(url, data=content) as resp:
             status = resp.status
+            if status != const.HTTP_OK:
+                logging.error("%s: Feature submission failed with HTTP %i",
+                              self.filename)
         return status
 
 
 class Abzer():
-    def __init__(self, filenames):
-        self.db = sqlite3.connect("/home/wieland/.abzsubmit/filelog.sqlite")
-        self.filenames = filenames
+    def __init__(self, essentia_path, profile_path, filenames):
         self.cpusem = asyncio.BoundedSemaphore(2)
+        self.db = sqlite3.connect(const.LOGFILE)
+        self.essentia_path = essentia_path
+        self.filenames = filenames
+        self.profile_path = profile_path
         self.session = aiohttp.ClientSession()
 
     def _log_completion(self, filename, status):
@@ -75,6 +85,7 @@ class Abzer():
 
     def _files_to_process(self):
         to_process = set(self.filenames)
+        logging.debug("Files to process: %s", to_process)
         already_processed = set(self._processed_files_from_log())
         to_process.difference_update(already_processed)
         return to_process
@@ -82,15 +93,20 @@ class Abzer():
     async def process(self, file):
         await self.cpusem.acquire()
         fp = FileHandler(file)
-        await fp.process()
+        rc = await fp.process(self.essentia_path, self.profile_path)
         self.cpusem.release()
-        try:
-            http = await fp.submit_features(self.session)
-            status = "HTTP %i" % http
-        except ValueError:
-            status = "No MBID"
+
+        if rc != 0:
+            status = "Ret %i" % rc
+        else:
+            try:
+                http = await fp.submit_features(self.session)
+                status = "HTTP %i" % http
+            except ValueError:
+                status = "No MBID"
         # Let's hope this doesn't take too long for now :-)
         self._log_completion(file, status)
+        logging.info("%s: Done", fp.filename)
 
     async def run(self):
         to_process = self._files_to_process()
@@ -98,12 +114,4 @@ class Abzer():
             tasks = [self.process(f) for f in to_process]
             await asyncio.wait(tasks)
         else:
-            print("All files have already been processed")
-
-files = (join("/home/wieland/Musik", filename) for filename in
-         listdir("/home/wieland/Musik")[-3:])
-loop = asyncio.get_event_loop()
-abzer = Abzer(files)
-loop.run_until_complete(abzer.run())
-abzer.session.close()
-loop.close()
+            logging.info("All files have already been processed")
