@@ -63,6 +63,7 @@ class FileHandler():
 class Abzer():
     def __init__(self, num_processes, essentia_path, profile_path, filenames):
         self.db = sqlite3.connect(const.LOGFILE)
+        self._setup_db()
         self.essentia_path = essentia_path
         self.filenames = filenames
         self.num_processes = num_processes
@@ -93,6 +94,11 @@ class Abzer():
         already_processed = set(self._processed_files_from_log())
         to_process.difference_update(already_processed)
         return to_process
+
+    def _setup_db(self):
+        with self.db:
+            self.db.execute("""create table if not exists filelog (id integer primary key, filename text not null, reason text)""")  # noqa
+            self.db.execute("""create index if not exists filelog_filename on filelog(filename)""")  # noqa
 
     async def _process(self, file):
         fp = FileHandler(file)
