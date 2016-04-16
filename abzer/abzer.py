@@ -15,7 +15,7 @@ from tempfile import NamedTemporaryFile
 
 class FileHandler():
     """Takes care of analyzing an audio file and submitting the features to
-    acousticbrainz.or
+    acousticbrainz.org.
 
     """
     def __init__(self, filename):
