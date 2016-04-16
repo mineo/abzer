@@ -2,6 +2,7 @@
 # coding: utf-8
 # Copyright © 2016 Wieland Hoffmann
 # License: MIT, see LICENSE for details
+from .version import version
 from os.path import expanduser, join
 
 HTTP_OK = 200
@@ -12,4 +13,5 @@ DEFAULT_CONFIG_PATH = join(DEFAULT_PATH, "abzsubmit.conf")
 LOGFILE = join(DEFAULT_PATH, "filelog.sqlite")
 DEFAULTS = {"path": "/usr/bin/streaming_extractor_music",
             "profile": join(DEFAULT_PATH, "profile.yaml")}
+HEADERS = {"User-Agent": "abzer %s (https://github.com/mineo/abzer)" % version}
 URL_BASE = "http://acousticbrainz.org/%s/low-level"

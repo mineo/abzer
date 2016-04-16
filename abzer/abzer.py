@@ -67,7 +67,7 @@ class Abzer():
         self.filenames = filenames
         self.num_processes = num_processes
         self.profile_path = profile_path
-        self.session = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession(headers=const.HEADERS)
         # Set the queue size to double the amount of processes. That way, more
         # filenames than subprocesses are in the queue, but not all of them
         # (which might be hundreds of thousands).
