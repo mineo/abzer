@@ -46,7 +46,7 @@ def main():
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG)
     else:
-        logging.basicConfig(level=logging.DEBUG, format="%(message)s")
+        logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     try:
         config = read_config(args.config)
