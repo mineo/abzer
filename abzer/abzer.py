@@ -62,12 +62,12 @@ class FileHandler():
 
 class Abzer():
     def __init__(self, essentia_path, profile_path, filenames):
-        self.cpusem = asyncio.BoundedSemaphore(2)
         self.db = sqlite3.connect(const.LOGFILE)
         self.essentia_path = essentia_path
         self.filenames = filenames
         self.profile_path = profile_path
         self.session = aiohttp.ClientSession()
+        self.queue = asyncio.Queue()
 
     def _log_completion(self, filename, status):
         with self.db:
@@ -90,11 +90,9 @@ class Abzer():
         to_process.difference_update(already_processed)
         return to_process
 
-    async def process(self, file):
-        await self.cpusem.acquire()
+    async def _process(self, file):
         fp = FileHandler(file)
         rc = await fp.process(self.essentia_path, self.profile_path)
-        self.cpusem.release()
 
         if rc != 0:
             status = "Ret %i" % rc
@@ -104,14 +102,32 @@ class Abzer():
                 status = "HTTP %i" % http
             except ValueError:
                 status = "No MBID"
+
         # Let's hope this doesn't take too long for now :-)
         self._log_completion(file, status)
         logging.info("%s: Done", fp.filename)
 
+    async def consumer(self):
+        while True:
+            filename = await self.queue.get()
+            try:
+                await self._process(filename)
+            finally:
+                self.queue.task_done()
+
+    async def producer(self, to_process):
+        for filename in to_process:
+            logging.debug("Putting %s into the queue", filename)
+            await self.queue.put(filename)
+
     async def run(self):
         to_process = self._files_to_process()
         if to_process:
-            tasks = [self.process(f) for f in to_process]
-            await asyncio.wait(tasks)
+            tasks = []
+            tasks.append(self.producer(to_process))
+            for i in range(0, 2):
+                tasks.append(self.consumer())
+            tasks.append(self.queue.join())
+            await asyncio.gather(*tasks)
         else:
             logging.info("All files have already been processed")
