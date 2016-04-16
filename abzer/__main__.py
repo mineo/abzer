@@ -10,7 +10,7 @@ import logging
 
 from . import const
 from .abzer import Abzer
-from os import walk
+from os import cpu_count, walk
 from os.path import isfile, join
 
 
@@ -37,6 +37,10 @@ def main():
     parser.add_argument("-c", "--config",
                         help="The path to the config file.",
                         default=const.DEFAULT_CONFIG_PATH)
+    parser.add_argument("-p", "--processes",
+                        help="The number of processes to use for analyzing files.",  # noqa
+                        default=cpu_count(),
+                        type=int)
     parser.add_argument("-v", "--verbose",
                         help="Be more verbose.",
                         action="store_true",
@@ -63,12 +67,16 @@ def main():
             files.extend(collect_files(name))
 
     loop = asyncio.get_event_loop()
-    abzer = Abzer(config.get("essentia", "path"),
+    loop.set_debug(args.verbose)
+    abzer = Abzer(args.processes,
+                  config.get("essentia", "path"),
                   config.get("essentia", "profile"),
                   files)
-    loop.run_until_complete(abzer.run())
-    abzer.session.close()
-    loop.close()
+    try:
+        loop.run_until_complete(abzer.run())
+    finally:
+        abzer.session.close()
+        loop.close()
 
 if __name__ == "__main__":
     main()

@@ -61,13 +61,17 @@ class FileHandler():
 
 
 class Abzer():
-    def __init__(self, essentia_path, profile_path, filenames):
+    def __init__(self, num_processes, essentia_path, profile_path, filenames):
         self.db = sqlite3.connect(const.LOGFILE)
         self.essentia_path = essentia_path
         self.filenames = filenames
+        self.num_processes = num_processes
         self.profile_path = profile_path
         self.session = aiohttp.ClientSession()
-        self.queue = asyncio.Queue()
+        # Set the queue size to double the amount of processes. That way, more
+        # filenames than subprocesses are in the queue, but not all of them
+        # (which might be hundreds of thousands).
+        self.queue = asyncio.Queue(num_processes * 2)
 
     def _log_completion(self, filename, status):
         with self.db:
@@ -125,7 +129,7 @@ class Abzer():
         if to_process:
             tasks = []
             tasks.append(self.producer(to_process))
-            for i in range(0, 2):
+            for i in range(0, self.num_processes + 1):
                 tasks.append(self.consumer())
             tasks.append(self.queue.join())
             await asyncio.gather(*tasks)
