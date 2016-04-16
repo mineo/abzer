@@ -137,7 +137,8 @@ class Abzer():
         if to_process:
             tasks = []
             tasks.append(self.producer(to_process))
-            for i in range(0, self.num_processes):
+            num_tasks = min(len(to_process), self.num_processes)
+            for i in range(0, num_tasks):
                 tasks.append(self.consumer())
             tasks.append(self.queue.join())
             await asyncio.gather(*tasks)
