@@ -124,6 +124,8 @@ class Abzer():
                 await self._process(filename)
             finally:
                 self.queue.task_done()
+            if self.queue.empty():
+                break
 
     async def producer(self, to_process):
         for filename in to_process:
