@@ -22,5 +22,8 @@ setup(name="abzer",
       use_scm_version={"write_to": "abzer/version.py"},
       install_requires=["aiohttp"],
       extras_require={
-          'docs': ['sphinx']}
+          'docs': ['sphinx']},
+      entry_points={
+          'console_scripts': ['abzer=abzer.__main__:main']
+      }
       )
