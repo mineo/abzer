@@ -1,13 +1,13 @@
 pkgname=abzer-git
-pkgver=1
+pkgver=8fe1b37
 pkgrel=1
-pkgdesc=""
+pkgdesc="AcousticBrainz submission tool"
 arch=("any")
 url="https://github.com/mineo/abzer"
 license=('MIT')
 source=('git+https://github.com/mineo/abzer')
 md5sums=('SKIP')
-depends=('python')
+depends=('python' 'python-aiohttp')
 makedepends=('git')
 
 pkgver(){
