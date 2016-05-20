@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
+from codecs import open
 from setuptools import setup
 
 
@@ -17,7 +18,7 @@ setup(name="abzer",
                    "Operating System :: OS Independent",
                    "Programming Language :: Python :: 3.5"],
       description="",
-      long_description=open("README.txt").read(),
+      long_description=open("README.txt", encoding="utf-8").read(),
       setup_requires=["setuptools_scm"],
       use_scm_version={"write_to": "abzer/version.py"},
       install_requires=["aiohttp"],
