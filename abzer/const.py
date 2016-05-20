@@ -15,3 +15,10 @@ DEFAULTS = {"path": "/usr/bin/streaming_extractor_music",
             "profile": join(DEFAULT_PATH, "profile.yaml")}
 HEADERS = {"User-Agent": "abzer %s (https://github.com/mineo/abzer)" % version}
 URL_BASE = "http://acousticbrainz.org/%s/low-level"
+
+PROFILE_TEMPLATE = """requireMbid: true
+indent: 0
+mergeValues:
+    metadata:
+        version:
+            essentia_build_sha: {sha}"""

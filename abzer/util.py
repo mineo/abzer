@@ -7,8 +7,24 @@ import configparser
 import logging
 
 from . import const
+from hashlib import sha1
 from os import cpu_count, walk
 from os.path import join
+
+
+def create_profile_file(essentia_path, profile_path):
+    """
+    :param str essentia_path:
+    :param str profile_path:
+    """
+    hash_ = sha1()
+    with open(essentia_path, "rb") as fp:
+        hash_.update(fp.read())
+    digest = hash_.hexdigest()
+    profile = const.PROFILE_TEMPLATE.format(sha=digest)
+    logging.debug("Writing a profile with SHA1 %s to %s", digest, profile_path)
+    with open(profile_path, "w") as fp:
+        fp.write(profile)
 
 
 def collect_files(dir):
