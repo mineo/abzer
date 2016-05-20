@@ -15,10 +15,9 @@ from sys import exit
 
 
 def safety_check(config):
-    for filename in [config.get("essentia", "path"),
-                     config.get("essentia", "profile")]:
-        if not isfile(filename):
-            exit("%s does not exist" % filename)
+    filename = config.get("essentia", "path")
+    if not isfile(filename):
+        exit("%s does not exist" % filename)
 
 
 def main():
