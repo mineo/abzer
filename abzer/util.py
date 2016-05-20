@@ -8,8 +8,8 @@ import logging
 
 from . import const
 from hashlib import sha1
-from os import cpu_count, walk
-from os.path import join
+from os import cpu_count, makedirs, walk
+from os.path import dirname, isdir, join
 
 
 def create_profile_file(essentia_path, profile_path):
@@ -22,6 +22,11 @@ def create_profile_file(essentia_path, profile_path):
         hash_.update(fp.read())
     digest = hash_.hexdigest()
     profile = const.PROFILE_TEMPLATE.format(sha=digest)
+    profile_folder = dirname(profile_path)
+    if not isdir(profile_folder):
+        logging.info("Creating the directory %s to store the profile",
+                     profile_folder)
+        makedirs(profile_folder)
     logging.debug("Writing a profile with SHA1 %s to %s", digest, profile_path)
     with open(profile_path, "w") as fp:
         fp.write(profile)
