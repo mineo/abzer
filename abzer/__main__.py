@@ -2,14 +2,14 @@
 # coding: utf-8
 # Copyright © 2016 Wieland Hoffmann
 # License: MIT, see LICENSE for details
-import argparse
 import asyncio
 import configparser
 import logging
 
 
 from .abzer import Abzer
-from .util import collect_files, create_profile_file, make_argparser, read_config
+from .util import (collect_files, create_profile_file, make_argparser,
+                   read_config)
 from os.path import isfile
 from sys import exit
 
