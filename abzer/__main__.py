@@ -39,8 +39,7 @@ def main():
     safety_check(config)
 
     create_profile_file(config.get("essentia", "path"),
-                   config.get("essentia", "profile"))
-
+                        config.get("essentia", "profile"))
     files = []
 
     for name in args.filenames:
