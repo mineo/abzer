@@ -56,6 +56,10 @@ def read_config(filename):
     :param filename:
     """
     parser = configparser.ConfigParser(defaults=const.DEFAULTS)
-    parser.read([filename])
-    logging.debug("%s", parser["essentia"])
+    read = parser.read([filename])
+    if not (read or parser.has_section("essentia")):
+        # We can do everything we want by just using the default values.
+        # However, we do need an "essentia" section in the parser for the
+        # default values to be used.
+        parser.add_section("essentia")
     return parser
