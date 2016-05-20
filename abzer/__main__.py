@@ -8,8 +8,8 @@ import logging
 
 
 from .abzer import Abzer
-from .util import (collect_files, create_profile_file, make_argparser,
-                   read_config)
+from .util import (collect_files, create_profile_file, ensure_default_path,
+                   make_argparser, read_config)
 from os.path import isfile
 from sys import exit
 
@@ -37,6 +37,7 @@ def main():
 
     safety_check(config)
 
+    ensure_default_path()
     create_profile_file(config.get("essentia", "path"),
                         config.get("essentia", "profile"))
     files = []
