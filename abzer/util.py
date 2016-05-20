@@ -9,7 +9,7 @@ import logging
 from . import const
 from hashlib import sha1
 from os import cpu_count, makedirs, walk
-from os.path import isdir, join
+from os.path import abspath, isdir, join
 
 
 def create_profile_file(essentia_path, profile_path):
@@ -27,8 +27,9 @@ def create_profile_file(essentia_path, profile_path):
         fp.write(profile)
 
 
-def collect_files(dir):
-    for dirpath, dirnames, filenames in walk(dir):
+def collect_files(dir_):
+    absdir = abspath(dir_)
+    for dirpath, dirnames, filenames in walk(absdir):
         for filename in filenames:
             yield join(dir, dirpath, filename)
 
