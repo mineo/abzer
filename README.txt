@@ -1,3 +1,6 @@
+
+
+
 abzer
 ═════
 
@@ -23,5 +26,13 @@ abzer
   │   -v, --verbose         Be more verbose. (default: False)
   └────
 
+  abzer uses the same config file as the [acousticbrainz-client]
+  application, but only uses the `path' option in the `essentia'
+  section. However, it doesn't require a config file to work, but just
+  uses default values. If those don't work on your system, you'll be
+  notified of that.
+
 
   [here] https://abzer.readthedocs.org/en/latest/setup.html
+
+  [acousticbrainz-client] https://github.com/MTG/acousticbrainz-client

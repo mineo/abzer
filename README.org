@@ -1,4 +1,5 @@
 #+OPTIONS: toc:nil html-postamble:nil num:nil author:nil
+
 * abzer
 
 Install abzer as shown [[https://abzer.readthedocs.org/en/latest/setup.html][here]] , run it by either calling =/usr/bin/abzer= or
@@ -22,3 +23,8 @@ optional arguments:
                         (default: <number of cpus>)
   -v, --verbose         Be more verbose. (default: False)
 #+END_EXAMPLE
+
+abzer uses the same config file as the [[https://github.com/MTG/acousticbrainz-client][acousticbrainz-client]] application, but
+only uses the =path= option in the =essentia= section. However, it doesn't require a
+config file to work, but just uses default values. If those don't work on your
+system, you'll be notified of that.
