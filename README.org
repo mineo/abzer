@@ -1,4 +1,4 @@
-#+OPTIONS: toc:nil html-postamble:nil num:nil
+#+OPTIONS: toc:nil html-postamble:nil num:nil author:nil
 * abzer
 
 Install abzer as shown [[https://abzer.readthedocs.org/en/latest/setup.html][here]] , run it by either calling =/usr/bin/abzer= or
