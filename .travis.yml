@@ -1,4 +1,7 @@
 language: python
+python:
+  - "3.5"
+  - "nightly"
 env:
   - TOXENV=flake8
   - TOXENV=docs
