@@ -1,0 +1,8 @@
+language: python
+env:
+  - TOXENV=flake8
+  - TOXENV=docs
+install:
+  - travis_retry pip install tox
+script:
+  - travis_retry tox
