@@ -31,7 +31,7 @@ def collect_files(dir_):
     absdir = abspath(dir_)
     for dirpath, dirnames, filenames in walk(absdir):
         for filename in filenames:
-            yield join(dir, dirpath, filename)
+            yield join(dir_, dirpath, filename)
 
 
 def ensure_default_path():
