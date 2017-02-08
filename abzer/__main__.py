@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-# Copyright © 2016 Wieland Hoffmann
+# Copyright © 2016, 2017 Wieland Hoffmann
 # License: MIT, see LICENSE for details
 import asyncio
 import configparser
@@ -60,6 +60,7 @@ def main():
     finally:
         abzer.session.close()
         loop.close()
+
 
 if __name__ == "__main__":
     main()
