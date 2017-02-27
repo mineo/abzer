@@ -56,7 +56,7 @@ class FileHandler():
             status = resp.status
             if status != const.HTTP_OK:
                 logging.error("%s: Feature submission failed with HTTP %i",
-                              self.filename)
+                              self.filename, status)
         return status
 
 
