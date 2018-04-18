@@ -7,8 +7,6 @@ abzer
   Install abzer as shown [here] , run it by either calling
   `/usr/bin/abzer' or `python -m abzer'.
 
-  Until Read the Docs supports Python 3.5, I'll just dump `--help' here
-
   ┌────
   │ usage: abzer [-h] [-c CONFIG] [-p PROCESSES] [-v] FILENAME [FILENAME ...]
   │
@@ -33,6 +31,6 @@ abzer
   notified of that.
 
 
-  [here] https://abzer.readthedocs.org/en/latest/setup.html
+[here] https://abzer.readthedocs.org/en/latest/setup.html
 
-  [acousticbrainz-client] https://github.com/MTG/acousticbrainz-client
+[acousticbrainz-client] https://github.com/MTG/acousticbrainz-client

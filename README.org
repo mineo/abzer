@@ -5,8 +5,6 @@
 Install abzer as shown [[https://abzer.readthedocs.org/en/latest/setup.html][here]] , run it by either calling =/usr/bin/abzer= or
 =python -m abzer=.
 
-Until Read the Docs supports Python 3.5, I'll just dump =--help= here
-
 #+BEGIN_EXAMPLE
 usage: abzer [-h] [-c CONFIG] [-p PROCESSES] [-v] FILENAME [FILENAME ...]
 
