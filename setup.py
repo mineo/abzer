@@ -24,7 +24,7 @@ setup(name="abzer",
       install_requires=["aiohttp"],
       extras_require={
           'docs': ['sphinx', 'sphinxcontrib-autoprogram']},
-      python_requires='>=3.7',
+      python_requires='>=3.5',
       entry_points={
           'console_scripts': ['abzer=abzer.__main__:main']
       }
