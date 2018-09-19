@@ -20,7 +20,7 @@ def safety_check(config):
         exit("%s does not exist" % filename)
 
 
-def main():
+async def main():
     parser = make_argparser()
     args = parser.parse_args()
 
@@ -51,16 +51,12 @@ def main():
     loop = asyncio.get_event_loop()
     loop.set_debug(args.verbose)
 
-    abzer = Abzer(args.processes,
-                  config.get("essentia", "path"),
-                  config.get("essentia", "profile"),
-                  files)
-    try:
-        loop.run_until_complete(abzer.run())
-    finally:
-        abzer.session.close()
-        loop.close()
+    async with Abzer(args.processes,
+                     config.get("essentia", "path"),
+                     config.get("essentia", "profile"),
+                     files) as abzer:
+        await abzer.run()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

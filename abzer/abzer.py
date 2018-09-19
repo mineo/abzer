@@ -144,3 +144,12 @@ class Abzer():
             await asyncio.gather(*tasks)
         else:
             logging.info("All files have already been processed")
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        await self.close()
+
+    async def close(self):
+        await self.session.close()
