@@ -20,7 +20,7 @@ def safety_check(config):
         exit("%s does not exist" % filename)
 
 
-async def main():
+async def async_main():
     parser = make_argparser()
     args = parser.parse_args()
 
@@ -58,5 +58,9 @@ async def main():
         await abzer.run()
 
 
+def main():
+    asyncio.run(async_main())
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
