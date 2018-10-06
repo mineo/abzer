@@ -1,5 +1,8 @@
 language: python
-cache: pip
+cache:
+  pip: true
+  directories:
+    - "$HOME/bin"
 matrix:
   include:
   - python: "3.5"
@@ -12,7 +15,17 @@ matrix:
     env: TOXENV=py36
   - python: "3.7-dev"
     env: TOXENV=py37
+env:
+  global:
+    - ESSENTIA_VERSION=2.1_beta2
+before_install:
+  - export PATH="$HOME/bin:$PATH"
 install:
   - travis_retry pip install tox
+  - mkdir -p $HOME/bin
+  - cd $HOME/bin
+  - wget --continue ftp://ftp.acousticbrainz.org/pub/acousticbrainz/essentia-extractor-v$ESSENTIA_VERSION-linux-x86_64.tar.gz
+  - tar xfv essentia-extractor-v$ESSENTIA_VERSION-linux-x86_64.tar.gz
+  - cd -
 script:
   - travis_retry tox

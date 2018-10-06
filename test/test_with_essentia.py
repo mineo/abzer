@@ -35,6 +35,7 @@ def configfile(tmpdir, profilefile):
     """.format(essentiapath=essentia_path,
                profilepath=profilepath),
         encoding="utf-8")
+    return cfg
 
 
 @pytest.fixture
