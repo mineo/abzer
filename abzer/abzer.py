@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-# Copyright © 2016 Wieland Hoffmann
+# Copyright © 2016, 2018 Wieland Hoffmann
 # License: MIT, see LICENSE for details
 import aiohttp
 import asyncio
@@ -21,6 +21,12 @@ class FileHandler():
     def __init__(self, filename):
         self.filename = filename
         self.tempfile = NamedTemporaryFile(mode="r+b")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.tempfile.close()
 
     async def process(self, essentia, profile):
         """Analyze the file."""
@@ -101,21 +107,20 @@ class Abzer():
             self.db.execute("""create index if not exists filelog_filename on filelog(filename)""")  # noqa
 
     async def _process(self, file):
-        fp = FileHandler(file)
-        rc = await fp.process(self.essentia_path, self.profile_path)
+        with FileHandler(file) as fp:
+            rc = await fp.process(self.essentia_path, self.profile_path)
+            if rc != 0:
+                status = "Ret %i" % rc
+            else:
+                try:
+                    http = await fp.submit_features(self.session)
+                    status = "HTTP %i" % http
+                except ValueError:
+                    status = "No MBID"
 
-        if rc != 0:
-            status = "Ret %i" % rc
-        else:
-            try:
-                http = await fp.submit_features(self.session)
-                status = "HTTP %i" % http
-            except ValueError:
-                status = "No MBID"
-
-        # Let's hope this doesn't take too long for now :-)
-        self._log_completion(file, status)
-        logging.info("%s: Done", fp.filename)
+            # Let's hope this doesn't take too long for now :-)
+            self._log_completion(file, status)
+            logging.info("%s: Done", fp.filename)
 
     async def consumer(self):
         while True:
