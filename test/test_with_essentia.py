@@ -90,3 +90,6 @@ async def test_no_request_for_only_failures(abzer_factory, client_factory):
             prefix, rc = reason.split(" ", 1)
             assert prefix == "Ret"
             assert int(rc) != 0
+
+        total_entries = db.execute("SELECT count(filename) from filelog").fetchone()[0]
+        assert total_entries == len(files)
