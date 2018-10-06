@@ -21,13 +21,13 @@ setup(name="abzer",
                    "Programming Language :: Python :: 3.7"],
       description="AcousticBrainz submission tool",
       long_description=open("README.txt", encoding="utf-8").read(),
-      setup_requires=["setuptools_scm"],
+      setup_requires=["pytest-runner", "setuptools_scm"],
       use_scm_version={"write_to": "abzer/version.py"},
       install_requires=["aiohttp"],
+      tests_require=["pytest", "pytest-aiohttp"],
       extras_require={
           'docs': ['sphinx', 'sphinxcontrib-autoprogram']},
       python_requires='>=3.5',
       entry_points={
           'console_scripts': ['abzer=abzer.__main__:main']
-      }
-      )
+      })

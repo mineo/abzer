@@ -67,14 +67,18 @@ class FileHandler():
 
 
 class Abzer():
-    def __init__(self, num_processes, essentia_path, profile_path, filenames):
-        self.db = sqlite3.connect(const.LOGFILE)
+    def __init__(self, num_processes, essentia_path, profile_path, filenames,
+                 *, db=const.LOGFILE,
+                 session=None):
+        self.db = sqlite3.connect(db)
         self._setup_db()
         self.essentia_path = essentia_path
         self.filenames = filenames
         self.num_processes = num_processes
         self.profile_path = profile_path
-        self.session = aiohttp.ClientSession(headers=const.HEADERS)
+        if session is None:
+            session = aiohttp.ClientSession(headers=const.HEADERS)
+        self.session = session
         # Set the queue size to double the amount of processes. That way, more
         # filenames than subprocesses are in the queue, but not all of them
         # (which might be hundreds of thousands).
