@@ -16,9 +16,10 @@ setup(name="abzer",
                    "License :: OSI Approved :: MIT License",
                    "Natural Language :: English",
                    "Operating System :: OS Independent",
-                   "Programming Language :: Python :: 3.5",
                    "Programming Language :: Python :: 3.6",
-                   "Programming Language :: Python :: 3.7"],
+                   "Programming Language :: Python :: 3.7"
+                   "Programming Language :: Python :: 3.8"
+                   "Programming Language :: Python :: 3.9"],
       description="AcousticBrainz submission tool",
       long_description=open("README.txt", encoding="utf-8").read(),
       setup_requires=["pytest-runner", "setuptools_scm"],
